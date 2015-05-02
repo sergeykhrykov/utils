@@ -1,6 +1,6 @@
 @rem Define build properties
 @set BIT=32
-@set BUILD_CONFIG=Debug
+@set BUILD_CONFIG=RelWithDebInfo
 @rem set BUILD_CONFIG=RelWithDebInfo
 @set OPENGL_VERSION=OpenGL2
 @rem set OPENGL_VERSION=OpenGL
@@ -21,13 +21,18 @@
 @if exist "%ProgramFiles%\MSBuild\12.0\bin" set PATH=%ProgramFiles%\MSBuild\12.0\bin;%PATH%
 @if exist "%ProgramFiles(x86)%\MSBuild\12.0\bin" set PATH=%ProgramFiles(x86)%\MSBuild\12.0\bin;%PATH%
 
-@rem Change current dir and call CMake
-cd build
-cmake ..\src -DCMAKE_BUILD_TYPE="%BUILD_CONFIG%" -DBUILD_TESTING:BOOL=FALSE -DVTK_Group_Qt:BOOL=TRUE -DVTK_QT_VERSION:STRING="5" -DVTK_RENDERING_BACKEND:STRING="%OPENGL_VERSION%" -DCMAKE_PREFIX_PATH:PATH=%QT_PATH% -DCMAKE_INSTALL_PREFIX=%CMAKE_INSTALL_PREFIX% -G%GENERATOR% %CMAKE_ADDITIONAL_OPTS%
+@echo Building VTK for %BIT% bit with %OPENGL_VERSION% in %BUILD_CONFIG% configuration
+@echo Running CMake...
 
+@rem Change current dir and call CMake
+@cd build
+@cmake ..\src -DCMAKE_BUILD_TYPE="%BUILD_CONFIG%" -DBUILD_TESTING:BOOL=FALSE -DVTK_Group_Qt:BOOL=TRUE -DVTK_QT_VERSION:STRING="5" -DVTK_RENDERING_BACKEND:STRING="%OPENGL_VERSION%" -DCMAKE_PREFIX_PATH:PATH=%QT_PATH% -DCMAKE_INSTALL_PREFIX=%CMAKE_INSTALL_PREFIX% -G%GENERATOR% %CMAKE_ADDITIONAL_OPTS%
+
+@echo Running MSBuild...
 @rem Call MSBuild
 @msbuild ALL_BUILD.vcxproj /p:configuration=%BUILD_CONFIG%
 @msbuild INSTALL.vcxproj /p:configuration=%BUILD_CONFIG%
 
 @ rem Return to the initial directory
-cd ..
+@cd ..
+@echo Done.
